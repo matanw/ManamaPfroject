@@ -3,9 +3,16 @@ public class Node {
 	private Node right;
 	private Node left;
 	private Node parent;
-	private String name;
 	private Color color;
 	private StudentData studentData;
+
+	public Node(StudentData studentData, Node right, Node left, Color color) {
+		super();
+		this.studentData = studentData;
+		this.right = right;
+		this.left = left;
+		this.color = color;
+	}
 
 	public Node getRight() {
 		return right;
@@ -31,16 +38,12 @@ public class Node {
 		this.parent = parent;
 	}
 
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
 	public Color getColor() {
 		return color;
+	}
+
+	public long getKey() {
+		return studentData.getId();
 	}
 
 	public void setColor(Color color) {
@@ -53,14 +56,6 @@ public class Node {
 
 	public void setStudentData(StudentData studentData) {
 		this.studentData = studentData;
-	}
-
-	public boolean hasRealLeftSon() {
-		return left != null && left.parent == this;
-	}
-
-	public boolean hasRealRigthSon() {
-		return right != null && right.parent == this;
 	}
 
 }
