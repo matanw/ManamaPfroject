@@ -28,6 +28,42 @@ public class Tree {
 
 	public void remove(long studentId)// o(h)
 	{
+		Node originalNode = innerSearch(studentId);
+		if (originalNode == null) {
+			throw new IllegalArgumentException("number is not exists in tree");
+		}
+		Node nodeToDelete;
+		if (!hasRealSon(originalNode, SonType.RIGHT) || !hasRealSon(originalNode, SonType.LEFT)) {
+			nodeToDelete = originalNode;
+		} else {
+			nodeToDelete = getSuccessor(originalNode);
+		}
+		Node prev = getPredecessor(nodeToDelete);
+		Node next = getSuccessor(nodeToDelete);
+		Node son = null;
+		if (hasRealSon(nodeToDelete, SonType.RIGHT)) {
+			son = nodeToDelete.getRight();
+		} else if (hasRealSon(nodeToDelete, SonType.LEFT)) {
+			son = nodeToDelete.getLeft();
+		}
+		if (son != null) {
+			son.setParent(nodeToDelete.getParent());
+		}
+		if (nodeToDelete.getParent() == null) {
+			root = son;
+
+		} else if (nodeToDelete.getParent().getLeft() == nodeToDelete) {
+			nodeToDelete.getParent().setLeft(son);
+		} else if (nodeToDelete.getParent().getRight() == nodeToDelete) {
+			nodeToDelete.getParent().setRight(son);
+		}
+		if (prev != null && !hasRealSon(prev, SonType.LEFT)) {
+			prev.setLeft(getSuccessor(prev));
+		}
+		if (next != null && !hasRealSon(next, SonType.RIGHT)) {
+			next.setLeft(getPredecessor(next));
+		}
+		originalNode.setStudentData(nodeToDelete.getStudentData());
 	}
 
 	public StudentData search(long studentId)// o(h)
@@ -60,10 +96,14 @@ public class Tree {
 		if (node == null) {
 			return null;
 		}
+		return getStudentDataSafety(getSuccessor(node));
+	}
+
+	private Node getSuccessor(Node node) {
 		if (hasRealSon(node, SonType.RIGHT)) {
-			return getStudentDataSafety(goInDirection(node.getRight(), SonType.LEFT));
+			return goInDirection(node.getRight(), SonType.LEFT);
 		} else {
-			return getStudentDataSafety(node.getRight());
+			return node.getRight();
 		}
 	}
 
@@ -95,10 +135,14 @@ public class Tree {
 		if (node == null) {
 			return null;
 		}
+		return getStudentDataSafety(getPredecessor(node));
+	}
+
+	public Node getPredecessor(Node node) {
 		if (hasRealSon(node, SonType.LEFT)) {
-			return getStudentDataSafety(goInDirection(node.getLeft(), SonType.RIGHT));
+			return goInDirection(node.getLeft(), SonType.RIGHT);
 		} else {
-			return getStudentDataSafety(node.getLeft());
+			return node.getLeft();
 		}
 	}
 
@@ -179,6 +223,7 @@ public class Tree {
 
 	public void printTreeForDebug()// not part of assigment
 	{
+		System.out.println("**tree**");
 		printTreeForDebug(root, "");
 	}
 
